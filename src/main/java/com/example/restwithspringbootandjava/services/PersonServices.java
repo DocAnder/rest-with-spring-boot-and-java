@@ -1,5 +1,6 @@
 package com.example.restwithspringbootandjava.services;
 
+import com.example.restwithspringbootandjava.data.vo.v1.PersonVO;
 import com.example.restwithspringbootandjava.exceptions.ResourceNotFoundException;
 import com.example.restwithspringbootandjava.model.Person;
 import com.example.restwithspringbootandjava.repositories.PersonRepository;
@@ -26,33 +27,34 @@ public class PersonServices {
     @Autowired
     PersonRepository repository;
 
-    public Person findById(Long id){
+
+    public List<PersonVO> findAll(){
+
+        return repository.findAll();
+
+    }
+
+    public PersonVO findById(Long id){
 
         logger.info("Finding one person...");
         Person person = new Person();
         /*
-        * .orElseThrow + lambda function: facilita a sintaxe do throwCat, disparando a exceção
-        *  que personalizei no caso de o ID informado não possui um objeto no banco.
-        * */
+         * .orElseThrow + lambda function: facilita a sintaxe do throwCat, disparando a exceção
+         *  que personalizei no caso de o ID informado não possui um objeto no banco.
+         * */
 
         return repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No records found for this ID!"));
     }
 
 
-    public List<Person> findAll(){
 
-        List<Person> persons = new ArrayList<>();
-        return repository.findAll();
-
-    }
-
-    public Person create(Person person){
+    public PersonVO create(PersonVO person){
         logger.info("Creating one person...");
         return repository.save(person);
     }
 
-    public Person update(Person person){
+    public PersonVO update(PersonVO person){
         logger.info("Updating one person...");
 
         Person entity = repository.findById(person.getId())
