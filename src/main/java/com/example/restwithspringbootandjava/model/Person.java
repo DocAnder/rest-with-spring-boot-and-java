@@ -1,16 +1,29 @@
 package com.example.restwithspringbootandjava.model;
 
+import jakarta.persistence.*;
+
 import java.io.Serializable;
 import java.util.Objects;
 
+//A anotation Table + nome da tabela serve para "traduzir" para o JPA qual tabela essa entidade pertence.
+//E possivel que a tabela tenha um nome diferente do nome dado para a entidade.
+@Entity
+@Table(name="person")
 public class Person implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
+    //As anotations sobre o ID informam qual dado será utilizado como identificado e
+    // a forma que essa ID será gerado.
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(name="first_name", nullable = false, length = 80)
     private String firtsName;
+    @Column(name = "last_name", nullable = false, length = 80)
     private String lastName;
+    @Column(nullable = false, length = 100)
     private String address;
+    @Column(nullable = false, length = 6)
     private String gender;
 
     public Person(){}

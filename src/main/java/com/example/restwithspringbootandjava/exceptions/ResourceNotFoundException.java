@@ -7,12 +7,14 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 //Com a anotation ResponseStatus, sempre que ocorrer uma UnsuppoertedMathOperation, será retornado
 // um response status com o codigo definido.
-@ResponseStatus(HttpStatus.BAD_REQUEST)
-public class UnsupportedMathOperationException extends RuntimeException{
+@ResponseStatus(HttpStatus.NOT_FOUND)
+public class ResourceNotFoundException extends RuntimeException{
 
-    public UnsupportedMathOperationException(String ex){
+    private static final long serialVersionUID = 1L;
+
+    public ResourceNotFoundException(String ex){
         super(ex);
     }
 
-    private static final long serialVersionUID = 1L;
+
 }
