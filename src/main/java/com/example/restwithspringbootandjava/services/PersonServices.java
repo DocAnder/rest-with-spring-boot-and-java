@@ -30,13 +30,6 @@ public class PersonServices {
 
         logger.info("Finding one person...");
         Person person = new Person();
-
-
-        person.setFirtsName("Gepeto");
-        person.setLastName("Da silva");
-        person.setAddress("Vila dos Pia de Madeira");
-        person.setGender("Muleke");
-
         /*
         * .orElseThrow + lambda function: facilita a sintaxe do throwCat, disparando a exceção
         *  que personalizei no caso de o ID informado não possui um objeto no banco.
@@ -65,12 +58,12 @@ public class PersonServices {
         Person entity = repository.findById(person.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("No records found for this ID!"));
 
-        entity.setFirtsName(person.getFirtsName());
+        entity.setFirstName(person.getFirstName());
         entity.setLastName(person.getLastName());
         entity.setAddress(person.getAddress());
         entity.setGender(person.getGender());
 
-        return repository.save(entity);
+        return repository.save(person);
     }
 
     public void delete(Long id){

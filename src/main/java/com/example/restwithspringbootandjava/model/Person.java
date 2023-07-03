@@ -11,14 +11,15 @@ import java.util.Objects;
 @Table(name="person")
 public class Person implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+
     //As anotations sobre o ID informam qual dado será utilizado como identificado e
     // a forma que essa ID será gerado.
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name="first_name", nullable = false, length = 80)
-    private String firtsName;
+    private String firstName;
+
     @Column(name = "last_name", nullable = false, length = 80)
     private String lastName;
     @Column(nullable = false, length = 100)
@@ -36,12 +37,12 @@ public class Person implements Serializable {
         this.id = id;
     }
 
-    public String getFirtsName() {
-        return firtsName;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setFirtsName(String firtsName) {
-        this.firtsName = firtsName;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
     public String getLastName() {
@@ -73,11 +74,11 @@ public class Person implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Person person = (Person) o;
-        return Objects.equals(id, person.id) && Objects.equals(firtsName, person.firtsName) && Objects.equals(lastName, person.lastName) && Objects.equals(address, person.address) && Objects.equals(gender, person.gender);
+        return Objects.equals(id, person.id) && Objects.equals(firstName, person.firstName) && Objects.equals(lastName, person.lastName) && Objects.equals(address, person.address) && Objects.equals(gender, person.gender);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, firtsName, lastName, address, gender);
+        return Objects.hash(id, firstName, lastName, address, gender);
     }
 }
