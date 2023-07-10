@@ -16,38 +16,37 @@ import java.util.List;
 //controller em aplicações rest, permitindo que sejam retornados objetos e seus dados, que serão armazenados na
 //resposta Http (em json, xlm, etc...)
 @RestController
-@RequestMapping("/person")
+@RequestMapping("/api/person/v1")
 public class PersonController {
 
 
     @Autowired
     private PersonServices services;
 
-    /*Refatoração do RequestMappin para cada um dos Verbos HTTP
-    * deixando o codigo mais limpo e facil para leitura: Getmappin, PutMappin, etc....*/
-
+    /*O paramatro PRODUCES foi alterado nas rotas a fim de aceitar o retorno do conteudo,
+    * conforme a solicitação recebida. Agora, é possivel entregar JSON e XML*/
 
     @GetMapping(value = "/{id}",
-               produces = MediaType.APPLICATION_JSON_VALUE)
+               produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public PersonVO findById (@PathVariable(value = "id") Long id){
         return services.findById(id);
     }
 
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public List<PersonVO> findAll () {
         return services.findAll();
     }
 
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+            produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public PersonVO create (@RequestBody PersonVO person) {
         return services.create(person);
     }
 
     @PostMapping(value = "/v2",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+            consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+            produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public PersonVOV2 createV2 (@RequestBody PersonVOV2 person) {
 
         System.out.println("fistname " + person.getFirstName());
@@ -61,15 +60,14 @@ public class PersonController {
     }
 
 
-    @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+            produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public PersonVO update (@RequestBody PersonVO person) {
         return services.update(person);
     }
 
 
-    /*O retorno de uma ResponseEntity permite alterar o codigo do status mais adequado, no caso do
-    * delete, o 204 - noContent - é mais adequado do que o 200*/
+
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<?> delete (@PathVariable(value = "id") Long id){
         services.delete(id);

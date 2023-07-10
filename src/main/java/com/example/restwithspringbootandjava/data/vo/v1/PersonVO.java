@@ -1,23 +1,32 @@
 package com.example.restwithspringbootandjava.data.vo.v1;
 
-import jakarta.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import java.io.Serializable;
 import java.util.Objects;
 
+/*Com essa anotation JsonPropertyOrder posso decidir a ordem que os campos
+* serão exibidos no Json, o nome do atributo, ou até omitir algum dos campos
+* no JSon que será devoldido pela API.*/
 
-
+@JsonPropertyOrder({"id", "firstName", "lastName", "address", "gender"})
 public class PersonVO implements Serializable {
 
     private Long id;
 
+    //Alterado o campo firstName para first_name
+    @JsonProperty("first_name")
     private String firstName;
 
-
+    @JsonProperty("last_name")
     private String lastName;
 
     private String address;
 
+    //Com essa anotation JsonIgnore, o dado não será serializado
+    //@JsonIgnore
     private String gender;
 
     public PersonVO(){}
