@@ -48,21 +48,20 @@ public class PersonController {
             consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE, "application/x-yaml"},
             produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE, "application/x-yaml"})
     public PersonVOV2 createV2 (@RequestBody PersonVOV2 person) {
-
-        System.out.println("fistname " + person.getFirstName());
-        System.out.println("lastName " + person.getLastName());
-        System.out.println("Gender " + person.getGender());
-        System.out.println("Adress " + person.getAddress());
-        System.out.println("BirthDay "+ person.getBirthDay());
-
-
-        return services.createV2(person);
+       return services.createV2(person);
     }
 
 
     @PutMapping(consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE, "application/x-yaml"},
             produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE, "application/x-yaml"})
     public PersonVO update (@RequestBody PersonVO person) {
+
+        System.out.println(person.getKey());
+        System.out.println(person.getFirstName());
+        System.out.println(person.getLastName());
+        System.out.println(person.getGender());
+
+
         return services.update(person);
     }
 

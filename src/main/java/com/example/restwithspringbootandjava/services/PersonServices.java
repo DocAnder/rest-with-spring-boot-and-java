@@ -1,5 +1,6 @@
 package com.example.restwithspringbootandjava.services;
 
+import com.example.restwithspringbootandjava.controller.PersonController;
 import com.example.restwithspringbootandjava.data.vo.v1.PersonVO;
 import com.example.restwithspringbootandjava.data.vo.v2.PersonVOV2;
 import com.example.restwithspringbootandjava.exceptions.ResourceNotFoundException;
@@ -10,18 +11,17 @@ import com.example.restwithspringbootandjava.repositories.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+//Essas foram as importações necessárias para implementar os links nos objetos p/ o HATEOAS
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
+
 
 import java.util.List;
 import java.util.logging.Logger;
 
-//Anotation Serviçe permite que o springboot veja que essa classe será injetada em run time em outras
-// classes, durante a execução da nossa aplicação.
-// O que isso significa? A instanciação será criada automaticamente pelo springboot
-//Outras anotations também permitem a injeção da classe, como a Repository.
-//Todas essas anotations implementam a anotação @Component, indicando pois que são componentes
-// e podem ser injetados quando necessário.
-//Usar uma anotation ou outra (Repository x Service) serve para ajudar na legibilidade do codigo e
-//identificar o que a classe faz.
+
 @Service
 public class PersonServices {
 
@@ -36,24 +36,34 @@ public class PersonServices {
 
     public List<PersonVO> findAll(){
 
-        return DozerMapper.parseListObjects(repository.findAll(), PersonVO.class);
-
+        var persons = DozerMapper.parseListObjects(repository.findAll(), PersonVO.class);
+        persons
+                .stream()
+                .forEach(p -> p.add(linkTo(methodOn(PersonController.class).findById(p.getKey())).withSelfRel()));
+        return persons;
     }
 
     public PersonVO findById(Long id){
 
         logger.info("Finding one person...");
         Person person = new Person();
-        /*
-         * .orElseThrow + lambda function: facilita a sintaxe do throwCat, disparando a exceção
-         *  que personalizei no caso de o ID informado não possui um objeto no banco.
-         * */
+
+        /*Para implementar o HATEOAS precisamos incluir ao objeto, os links que lhe sejam pertinentes,
+        possibilitanto, apos a recuperação do dado, que o usuário já possa decidir o proximo passo.
+
+        Para tanto, o codigo foi alterado para, apos recuperar os dados da entidade no banco e realizar
+        sua conversão para um VO, inserir no VO antes do retorno, os links adequados.
+        * */
 
         var entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No records found for this ID!"));
 
-        return DozerMapper.parseObject(entity, PersonVO.class);
-
+        PersonVO vo = DozerMapper.parseObject(entity, PersonVO.class);
+        /*Com o add, criamos o campo que vai receber o link, apos, com o linkto,
+        * identificamos qual metodo desejamos, o method on é quem busca os metodos da classe passada
+        * como parametro. O withSelfRel indica que o link é uma relação do objeto com ele mesmo*/
+        vo.add(linkTo(methodOn(PersonController.class).findById(id)).withSelfRel());
+        return vo;
     }
 
     public PersonVO create(PersonVO person){
@@ -62,7 +72,7 @@ public class PersonServices {
         var entity = DozerMapper.parseObject(person, Person.class);
 
         var vo = DozerMapper.parseObject(repository.save(entity), PersonVO.class);
-
+        vo.add(linkTo(methodOn(PersonController.class).findById(vo.getKey())).withSelfRel());
         return vo;
     }
 
@@ -85,7 +95,7 @@ public class PersonServices {
     public PersonVO update(PersonVO person){
         logger.info("Updating one person...");
 
-        Person entity = repository.findById(person.getId())
+        Person entity = repository.findById(person.getKey())
                 .orElseThrow(() -> new ResourceNotFoundException("No records found for this ID!"));
 
         entity.setFirstName(person.getFirstName());
@@ -94,7 +104,7 @@ public class PersonServices {
         entity.setGender(person.getGender());
 
         var vo = DozerMapper.parseObject(repository.save(entity), PersonVO.class);
-
+        vo.add(linkTo(methodOn(PersonController.class).findById(vo.getKey())).withSelfRel());
         return vo;
 
     }

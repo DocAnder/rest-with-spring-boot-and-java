@@ -3,20 +3,26 @@ package com.example.restwithspringbootandjava.data.vo.v1;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.github.dozermapper.core.Mapping;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.io.Serializable;
 import java.util.Objects;
 
-/*Com essa anotation JsonPropertyOrder posso decidir a ordem que os campos
-* serão exibidos no Json, o nome do atributo, ou até omitir algum dos campos
-* no JSon que será devoldido pela API.*/
+/*Para implementar o HATEOAS a classe PersonVO precisa extender a classe RepresentationModel */
 
 @JsonPropertyOrder({"id", "firstName", "lastName", "address", "gender"})
-public class PersonVO implements Serializable {
+public class PersonVO extends RepresentationModel<PersonVO> implements Serializable {
 
-    private Long id;
+    /*A classe RepresentationModel já tem um campo chamado Id, por isso foi alterado o nome para KEY.
+    Com essa alteração, precisamos mapepar para o Dozer que agora o campo KEY do PersonVO, refere ao
+    campo ID da Entidade. Caso contrário, ele não irá conseguir fazer o bind entre as classes.
+    */
 
-    //Alterado o campo firstName para first_name
+    @JsonProperty("id")
+    @Mapping("id")
+    private Long key;
+
     @JsonProperty("first_name")
     private String firstName;
 
@@ -25,18 +31,17 @@ public class PersonVO implements Serializable {
 
     private String address;
 
-    //Com essa anotation JsonIgnore, o dado não será serializado
-    //@JsonIgnore
+
     private String gender;
 
     public PersonVO(){}
 
-    public Long getId() {
-        return id;
+    public Long getKey() {
+        return key;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setKey(Long key) {
+        this.key = key;
     }
 
     public String getFirstName() {
@@ -75,12 +80,13 @@ public class PersonVO implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        PersonVO person = (PersonVO) o;
-        return Objects.equals(id, person.id) && Objects.equals(firstName, person.firstName) && Objects.equals(lastName, person.lastName) && Objects.equals(address, person.address) && Objects.equals(gender, person.gender);
+        if (!super.equals(o)) return false;
+        PersonVO personVO = (PersonVO) o;
+        return Objects.equals(key, personVO.key) && Objects.equals(firstName, personVO.firstName) && Objects.equals(lastName, personVO.lastName) && Objects.equals(address, personVO.address) && Objects.equals(gender, personVO.gender);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, firstName, lastName, address, gender);
+        return Objects.hash(super.hashCode(), key, firstName, lastName, address, gender);
     }
 }
