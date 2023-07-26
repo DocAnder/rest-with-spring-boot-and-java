@@ -12,7 +12,7 @@ import java.util.Objects;
 public class Person implements Serializable {
 
 
-    //As anotations sobre o ID informam qual dado será utilizado como identificado e
+    //As anotations sobre o ID informam qual dado será utilizado como identificador e
     // a forma que essa ID será gerado.
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

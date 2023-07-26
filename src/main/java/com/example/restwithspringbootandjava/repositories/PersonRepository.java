@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 
 
 /*
-* A anotation repository sobre a interface nos disponibiliza do CRUD basico
+* A anotation repository sobre a interface nos disponibiliza o CRUD basico
 * das operações mais comuns com o banco.
 *
 * A extensão pede como parametros a ENTIDADE + o TIPO do ID desta entidade,

@@ -1,0 +1,52 @@
+
+
+A refatoração para implementação do Spring Security e do JWT, para a API oferecer autenticação de usuários,
+ exigiu várias alterações no código.
+
+Para melhor compreensão, podemos considerar a seguinte ordem de mudanças e os pontos mais relevantes:
+
+1) Criação das tabelas no banco p/ armanezar os dados dos usuários:
+
+    As tabelas - users, permission e user_permission - e seus campos, são convençõse do Spring Security.
+    Por isso, possuem os campos postos e configuração de relação mapeada.
+    Somente o campo full_name foi adicionado a mais, os demais são todos padrão e obrigatórios.
+
+
+2) Adição das dependencias do Spring Security e do JWT ao POM e criação/mapeamento das entidades:
+
+    <dependency>
+      <groupId>com.auth0</groupId>
+      <artifactId>java-jwt</artifactId>
+      <version>3.18.3</version>
+    </dependency>
+
+     <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-security</artifactId>
+     </dependency>
+
+    Criação e mapeamento das entidades User e Permission no pacote model (vide notas nas classes)
+    e do repositório para o User(vide notas em UserRepository);
+
+3) Adição dos VO's AccountCredentialsVO e TokenVO
+
+   A AccountCredentialsVO é a requisição do usuario informando o login e senha.
+   O TokenVO sera a resposta contendo todos os dados necessários para manter o usuario logado.
+   Criamos nessa faze támbem algumas exceções personalizadas.
+
+4) Implementação da classe que irá prover o Token (JwtTokenProvider)
+
+    Talvez a classe mais importante, pois é a responsável por prover o Token ao usuário.
+
+    Primeiro foi alterado o yml da api para inserir os dados de segurança necessários ao JWT
+
+    security:
+      jwt:
+        token:
+          secret-key: 53cr37 -> a chave secreta que será utilizada para encriptar os dados
+          expire-length: 3600000 -> tempo de vida que irá durar o token, no caso, uma hora (milisegundos)
+
+    Depois, foram criadas as classes JwtTokenProvider, JwtTokenFilter e JwtConfigurer
+
+ 5) Criação da classe AuthController que vai gerenciar as autenticações:
+
