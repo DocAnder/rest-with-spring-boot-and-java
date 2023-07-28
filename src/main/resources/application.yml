@@ -1,3 +1,5 @@
+file:
+  upload-dir: /Users/Anderson/Downloads/uploadDir
 security:
   jwt:
     token:
@@ -16,6 +18,11 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
         show_sql: true
+  servlet:
+   multipart:
+     file-size-threshold: 2KB
+     max-file-size: 200MB
+     max-request-size: 215MB
 springdoc:
   pathsToMach: /api/**/v1/**
   swagger-ui:

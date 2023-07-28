@@ -8,7 +8,10 @@ import com.example.restwithspringbootandjava.mapper.DozerMapper;
 import com.example.restwithspringbootandjava.mapper.custom.PersonMapper;
 import com.example.restwithspringbootandjava.model.Person;
 import com.example.restwithspringbootandjava.repositories.PersonRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 //Essas foram as importações necessárias para implementar os links nos objetos p/ o HATEOAS
@@ -34,13 +37,14 @@ public class PersonServices {
     PersonMapper mapper;
 
 
-    public List<PersonVO> findAll(){
+    public Page<PersonVO> findAll(Pageable pageable){
 
-        var persons = DozerMapper.parseListObjects(repository.findAll(), PersonVO.class);
-        persons
-                .stream()
-                .forEach(p -> p.add(linkTo(methodOn(PersonController.class).findById(p.getKey())).withSelfRel()));
-        return persons;
+        var personPage = repository.findAll(pageable);
+
+        var personVosPage = personPage.map(p -> DozerMapper.parseObject(p, PersonVO.class));
+        personVosPage.map(p -> p.add(linkTo(methodOn(PersonController.class).findById(p.getKey())).withSelfRel()));
+
+        return personVosPage;
     }
 
     public PersonVO findById(Long id){
@@ -108,6 +112,27 @@ public class PersonServices {
         return vo;
 
     }
+
+
+    @Transactional
+    public PersonVO disablePerson(Long id){
+
+        logger.info("Disabling one person...");
+
+        repository.disablePerson(id);
+
+        var entity = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("No records found for this ID!"));
+
+        PersonVO vo = DozerMapper.parseObject(entity, PersonVO.class);
+
+        vo.add(linkTo(methodOn(PersonController.class).findById(id)).withSelfRel());
+        return vo;
+    }
+
+
+
+
 
     public void delete(Long id){
         logger.info("Deleting one person...");

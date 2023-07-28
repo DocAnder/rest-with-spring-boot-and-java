@@ -31,8 +31,9 @@ public class PersonVO extends RepresentationModel<PersonVO> implements Serializa
 
     private String address;
 
-
     private String gender;
+
+    private Boolean enable;
 
     public PersonVO(){}
 
@@ -76,17 +77,25 @@ public class PersonVO extends RepresentationModel<PersonVO> implements Serializa
         this.gender = gender;
     }
 
+    public Boolean getEnable() {
+        return enable;
+    }
+
+    public void setEnable(Boolean enable) {
+        this.enable = enable;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         PersonVO personVO = (PersonVO) o;
-        return Objects.equals(key, personVO.key) && Objects.equals(firstName, personVO.firstName) && Objects.equals(lastName, personVO.lastName) && Objects.equals(address, personVO.address) && Objects.equals(gender, personVO.gender);
+        return Objects.equals(key, personVO.key) && Objects.equals(firstName, personVO.firstName) && Objects.equals(lastName, personVO.lastName) && Objects.equals(address, personVO.address) && Objects.equals(gender, personVO.gender) && Objects.equals(enable, personVO.enable);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), key, firstName, lastName, address, gender);
+        return Objects.hash(super.hashCode(), key, firstName, lastName, address, gender, enable);
     }
 }

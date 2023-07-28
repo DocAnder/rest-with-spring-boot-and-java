@@ -11,6 +11,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -67,8 +70,15 @@ public class PersonController {
             @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public List<PersonVO> findAll () {
-        return services.findAll();
+    public ResponseEntity<Page<PersonVO>> findAll (
+            @RequestParam (value = "page", defaultValue = "0") Integer page,
+            @RequestParam (value = "limit", defaultValue = "12") Integer limit
+    ) {
+        Pageable pageable = PageRequest.of(page, limit);
+
+
+
+        return ResponseEntity.ok(services.findAll(pageable));
     }
 
 
@@ -122,6 +132,27 @@ public class PersonController {
 
         return services.update(person);
     }
+
+
+    @PatchMapping(value = "/{id}",
+            produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE, "application/x-yaml"})
+    @Operation(summary = "Disable specific Person by id", description = "Disable a Person",
+            tags = {"People" },
+            responses = {
+                    @ApiResponse(description = "Success", responseCode = "200",
+                            content = @Content(schema = @Schema(implementation = PersonVO.class))
+                    ),
+                    @ApiResponse(description = "No Content", responseCode = "204", content = @Content),
+                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
+                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
+                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
+                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
+            }
+    )
+    public PersonVO disablePerson (@PathVariable(value = "id") Long id){
+        return services.disablePerson(id);
+    }
+
 
 
 
